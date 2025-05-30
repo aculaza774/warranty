@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premier Warranty - Smart Protection Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.15) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+        }
+
+        .form-section {
+            padding: 40px 0;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group select option {
+            background: #2a2a2a;
+            color: #ffffff;
+            padding: 8px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7877c6;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 4px rgba(120, 119, 198, 0.2);
+        }
+
+        .checkbox-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #7877c6;
+        }
+
+        .vehicle-status {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #7877c6;
+            margin-bottom: 4px;
+        }
+
+        .status-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #7877c6 0%, #ff77c6 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(120, 119, 198, 0.4);
+        }
+
+        .results-section {
+            padding: 60px 0;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .results-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .comparison-summary {
+            background: rgba(120, 119, 198, 0.1);
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .comparison-summary h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .comparison-summary p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+        }
+
+        .warranty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .warranty-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .warranty-card.recommended {
+            border: 2px solid #7877c6;
+            background: linear-gradient(135deg, rgba(120, 119, 198, 0.15) 0%, rgba(255, 119, 198, 0.1) 100%);
+            transform: scale(1.02);
+        }
+
+        .recommendation-badge {
+            position: absolute;
+            top: -1px;
+            right: 20px;
+            background: linear-gradient(135deg, #7877c6, #ff77c6);
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .warranty-header {
+            margin-bottom: 24px;
+        }
+
+        .warranty-type {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .type-wrap { 
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #ffffff;
+        }
+        .type-new { 
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #ffffff;
+        }
+        .type-used { 
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #ffffff;
+        }
+
+        .warranty-price {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .price-breakdown {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .price-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+
+        .price-item-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .price-item-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+        }
+
+        .warranty-features {
+            margin: 24px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .feature-icon.green {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .feature-icon.blue {
+            background: rgba(120, 119, 198, 0.2);
+            color: #7877c6;
+        }
+
+        .coverage-timeline {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .timeline-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .timeline-bar {
+            position: relative;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .timeline-fill {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, #7877c6, #ff77c6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .value-proposition {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .value-proposition p {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2) 0%, rgba(220, 53, 69, 0.1) 100%);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .eligibility-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .warranty-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="header">
+        <div class="container">
+            <h1>Premier Warranty</h1>
+            <p>Smart Protection Advisor</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-section">
+            <div class="form-card">
+                <h2 class="section-title">Vehicle Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="manufacturer">Vehicle Manufacturer</label>
+                        <select id="manufacturer" onchange="handleManufacturerChange()">
+                            <option value="">Select Manufacturer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="modelGroup" style="display: none;">
+                        <label for="specificModel">Specific Model (Optional)</label>
+                        <select id="specificModel" onchange="handleModelChange()">
+                            <option value="">Use General Classification</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="planCode">Classification Code</label>
+                        <input type="text" id="planCode" placeholder="Auto-filled" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstUseDate">Date of First Use</label>
+                        <input type="date" id="firstUseDate" onchange="updateVehicleStatus()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentMileage">Current Mileage</label>
+                        <input type="number" id="currentMileage" placeholder="Enter current miles" onchange="updateVehicleStatus()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purchaseDate">Purchase/Contract Date</label>
+                        <input type="date" id="purchaseDate" value="">
+                    </div>
+                </div>
+
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hasTurbo">
+                        <label for="hasTurbo">Turbo/Supercharged (+$150)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="isDiesel">
+                        <label for="isDiesel">Diesel Engine (+$150)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2 class="section-title">Coverage Preferences (Optional)</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="yearsToKeep">How many years will you keep this vehicle?</label>
+                        <input type="number" id="yearsToKeep" placeholder="e.g., 5" min="1" max="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="milesPerYear">Average miles driven per year?</label>
+                        <input type="number" id="milesPerYear" placeholder="e.g., 12000" min="1000" max="50000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="vehicle-status" id="vehicleStatus" style="display: none;">
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-value" id="statusAge">--</div>
+                        <div class="status-label">Vehicle Age</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="statusMiles">--</div>
+                        <div class="status-label">Current Miles</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="statusWarranty">--</div>
+                        <div class="status-label">Factory Warranty</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="statusEligible">--</div>
+                        <div class="status-label">Plans Available</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateWarranties()">
+                Find My Best Protection Plan
+            </button>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        
+        <div id="resultsSection" class="results-section" style="display: none;">
+            <div class="results-header">
+                <h2>Your Recommended Protection Plans</h2>
+                <p>We've analyzed your vehicle and found the best coverage options</p>
+            </div>
+            
+            <div id="comparisonSummary" class="comparison-summary" style="display: none;"></div>
+            
+            <div id="warrantyGrid" class="warranty-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+
+        // Manufacturer data from PDF
+        const manufacturerData = {
+            'acura': { name: 'Acura', generalCode: '23D', models: { 'MDX': '24D', 'ZDX': '24D' }, ineligible: ['NSX'] },
+            'audi': { name: 'Audi', generalCode: '37M', models: {}, ineligible: ['S8', 'R8', 'R9', 'Any Model With 8 or more cylinders'] },
+            'bmw': { name: 'BMW', generalCode: '35M', models: { '100 Series': '34L', '300 Series': '34L', '500 Series': '36M', '600 Series': '38M', '700 Series': '38M', 'M Series': '39M' }, ineligible: ['Z8'] },
+            'buick': { name: 'Buick', generalCode: '6B', models: { '4WD/AWD Models': '6D' }, ineligible: [] },
+            'cadillac': { name: 'Cadillac', generalCode: '5I', models: { 'CTS': '4I', 'SRX': '4I' }, ineligible: ['V Series', 'XLR', 'Any Model With 4.1L engine'] },
+            'chevrolet': { name: 'Chevrolet', generalCode: '2B', models: { '4WD/AWD Models': '3D', 'Aveo': '1B', 'Camaro': '3F', 'Cobalt': '1B', 'Corvette': '3F', 'Cruze': '1B', 'Impala': '2C', 'Monte Carlo': '2C', 'SSR': '3D', 'Suburban': '3C' }, ineligible: ['Corvette ZO6/ZR1'] },
+            'chrysler': { name: 'Chrysler', generalCode: '2E', models: { '300': '3F', '4WD/AWD Models': '3F', 'Crossfire': '3H', 'PT Cruiser': '2D' }, ineligible: [] },
+            'dodge': { name: 'Dodge', generalCode: '2E', models: { '4WD/AWD Models': '3F', 'Avenger': '2D', 'Caliber': '2D', 'Challenger': '3E', 'Charger': '3F', 'Dakota 2WD': '2D', 'Magnum': '3E' }, ineligible: ['Stealth', 'Viper'] },
+            'fiat': { name: 'Fiat', generalCode: '23B', models: {}, ineligible: [] },
+            'ford': { name: 'Ford', generalCode: '8C', models: { 'E-250/350 2WD': '10E', 'E-250/350 4WD': '11G', 'F-250/350 2WD': '10E', 'F-250/350 4WD': '11G', 'Fiesta': '7B', 'Focus': '7B', 'Ranger 2WD': '7B', 'Ranger 4WD': '8C', 'Taurus SHO': '9D', 'Taurus SHO AWD': '10D', '4WD/AWD Models': '9D' }, ineligible: ['Foose F-150', 'GT', 'Mustang Cobra R', 'Roush Stage 2/Stage 3/427R', 'All Saleen Modified Vehicles', 'Shelby GT500 KR & Supersnake'] },
+            'gmc': { name: 'GMC', generalCode: '2B', models: { '4WD/AWD Models': '3D' }, ineligible: [] },
+            'honda': { name: 'Honda', generalCode: '13C', models: { 'Civic': '12B', 'Civic Hybrid': '13B', 'Fit': '12B', 'Odyssey': '14C', 'Passport 4WD': '14D', 'Pilot 4WD': '14D', 'Ridgeline': '14D', 'S2000': '22D' }, ineligible: [] },
+            'hummer': { name: 'Hummer', generalCode: '5I', models: { 'H3': '2C' }, ineligible: ['H1'] },
+            'hyundai': { name: 'Hyundai', generalCode: '18E', models: { 'Accent': '18D', 'Elantra': '18D', 'Equus': '19G', 'Genesis': '18E', 'Santa Fe 4WD': '18F', 'Scoupe': '18F', 'Tiburon': '18D', 'Tucson 2WD/4WD': '18D', 'Veloster': '18D', 'Veracruz 4WD': '18F' }, ineligible: [] },
+            'infiniti': { name: 'Infiniti', generalCode: '23G', models: { 'FX50': '25G', 'QX56': '25G' }, ineligible: [] },
+            'isuzu': { name: 'Isuzu', generalCode: '10E', models: { '4WD/AWD Models': '11F' }, ineligible: [] },
+            'jaguar': { name: 'Jaguar', generalCode: '39M', models: { 'S Type': '38M', 'X Type': '38M' }, ineligible: [] },
+            'jeep': { name: 'Jeep', generalCode: '2E', models: { '4WD/AWD Models': '3F' }, ineligible: [] },
+            'kia': { name: 'Kia', generalCode: '19D', models: { 'Amanti': '19E', 'Sedona': '19E', 'Cadenza': '19E', 'Borrego 2WD': '19E', 'Borrego 4WD': '19F', 'Sorento 2WD': '19E', 'Sorento 4WD': '19F' }, ineligible: [] },
+            'landrover': { name: 'Land Rover', generalCode: '39M', models: { 'Freelander': '36M', 'LR2': '36M', 'Range Rover': '40M' }, ineligible: [] },
+            'lexus': { name: 'Lexus', generalCode: '25G', models: { 'ES330/350': '23G', 'GS350': '23G', 'IS250/300/350': '23G', 'RX300/330': '23G' }, ineligible: ['LF-A'] },
+            'lincoln': { name: 'Lincoln', generalCode: '8C', models: { '4WD/AWD Models': '9D' }, ineligible: [] },
+            'mazda': { name: 'Mazda', generalCode: '9D', models: { '4WD/AWD Models': '10E', 'B-Series Pickup 2WD': '9C', 'B-Series Pickup 4WD': '10D', 'CX-7': '10E', 'Mazda2': '8B', 'Mazda3': '8B', 'Mazda6': '9C', 'MX-5 Miata': '8C' }, ineligible: [] },
+            'mercedes': { name: 'Mercedes-Benz', generalCode: '39M', models: { 'C Class': '38M', 'CLK Class': '38M', 'CLS Class': '38M', 'GL Class': '38M', 'GLK Class': '38M', 'M Class': '38M', 'R Class': '38M', 'SLK Class': '38M' }, ineligible: ['AMG', 'Kompressor'] },
+            'mercury': { name: 'Mercury', generalCode: '11C', models: { '4WD/AWD Models': '12D' }, ineligible: [] },
+            'mini': { name: 'Mini', generalCode: '26G', models: {}, ineligible: [] },
+            'mitsubishi': { name: 'Mitsubishi', generalCode: '18E', models: { '4WD/AWD Models': '18F', 'Diamante': '18G', 'Lancer 2WD': '18C', 'Lancer AWD': '18D', 'Mirage': '18C', 'Lancer Evolution': '19G', 'Lancer Ralliart': '19G' }, ineligible: [] },
+            'nissan': { name: 'Nissan', generalCode: '20D', models: { '300ZX/350Z/370Z': '21E', 'Altima': '20C', 'Armada 2WD': '21D', 'Armada 4WD': '22E', 'Cube': '20B', 'Frontier 4WD': '20E', 'Juke': '20B', 'Maxima': '21D', 'Murano 4WD': '21E', 'Pathfinder 2WD': '21D', 'Pathfinder 4WD': '21E', 'Quest': '21D', 'Rogue 2WD': '20B', 'Rogue 4WD': '21C', 'Sentra': '20B', 'Titan 2WD': '22C', 'Titan 4WD': '22E', 'Versa': '20B', 'Xterra 4WD': '21E' }, ineligible: ['GT-R'] },
+            'oldsmobile': { name: 'Oldsmobile', generalCode: 'D', models: { '4WD/AWD Models': 'G', 'Aurora': 'G', 'LSS': 'G', 'Regency': 'G' }, ineligible: [] },
+            'pontiac': { name: 'Pontiac', generalCode: '2C', models: { 'G3/G5': '2B', '4WD/AWD Models': '3F' }, ineligible: [] },
+            'porsche': { name: 'Porsche', generalCode: '32J', models: {}, ineligible: [] },
+            'saturn': { name: 'Saturn', generalCode: '2C', models: { '4WD/AWD Models': '2D', 'Astra': '1B', 'Ion': '2B', 'Sky': '2B' }, ineligible: [] },
+            'scion': { name: 'Scion', generalCode: '15B', models: {}, ineligible: [] },
+            'smart': { name: 'Smart', generalCode: '15B', models: {}, ineligible: [] },
+            'subaru': { name: 'Subaru', generalCode: '8D', models: { '6 cylinder & greater': '9F' }, ineligible: [] },
+            'suzuki': { name: 'Suzuki', generalCode: '10B', models: { '4WD/AWD Models': '11C' }, ineligible: [] },
+            'toyota': { name: 'Toyota', generalCode: '16D', models: { 'Avalon': '16E', 'Camry': '16C', 'Camry Hybrid': '16C', 'Corolla': '15B', 'Highlander Hybrid': '17D', 'Land Cruiser': '17G', 'Matrix 2WD': '15C', 'Matrix 4WD': '15D', 'Prius': '16B', 'Rav4 2WD': '15B', 'Rav4 4WD': '15C', 'Sequoia 2WD': '17D', 'Sequoia 4WD': '17E', 'Yaris': '15B' }, ineligible: [] },
+            'volkswagen': { name: 'Volkswagen', generalCode: '10D', models: { '4WD/AWD Models': '11F' }, ineligible: ['Phaeton', 'Any Model With a W12 Engine'] },
+            'volvo': { name: 'Volvo', generalCode: '34L', models: { 'S40': '33L', 'S80': '36L', 'V40': '33L', 'V50': '33L', 'XC60': '35L', 'XC70': '35L', 'XC90': '36L' }, ineligible: [] }
+        };
+
+        // COMPLETE Pricing Data from PDF
+        const wrapPricing = {
+            '60/60': [2936,3032,3103,3157,3203,2994,2950,2980,3007,3034,3094,2967,2981,2995,2820,2840,2896,2970,3012,3033,3130,3202,3065,3131,3114,3222,3264,3273,3296,3575,3863,4209,3313,3295,3403,3446,3454,3477,3756,4044],
+            '60/75': [2999,3103,3206,3315,3386,3067,3023,3072,3116,3159,3255,2986,3002,3018,2834,2858,2925,3026,3079,3044,3142,3215,3124,3201,3182,3340,3504,3513,3551,3930,4132,4581,3382,3363,3521,3685,3694,3733,4111,4314],
+            '60/85': [3075,3215,3369,3478,3576,3187,3073,3149,3208,3266,3393,2994,3010,3026,2841,2867,2939,3040,3093,3071,3193,3269,3159,3254,3300,3417,3509,3579,3807,4053,4487,5085,3435,3481,3598,3690,3761,3988,4234,4668],
+            '60/100': [3110,3270,3446,3584,3702,3244,3132,3222,3290,3359,3508,3044,3065,3092,2909,2958,3092,3092,3128,3129,3273,3362,3233,3344,3400,3536,3645,3727,3996,4284,4796,5498,3525,3581,3717,3826,3908,4177,4465,4977],
+            '60/125': [3203,3402,3621,3796,3941,3369,3268,3391,3484,3573,3778,3107,3125,3194,2985,3058,3257,3179,3224,3226,3406,3518,3355,3495,3564,3735,3872,3974,4309,4671,5310,6187,3676,3745,3916,4053,4155,4490,4852,5491],
+            '72/60': [2972,3094,3192,3198,3250,3059,2972,3010,3043,3075,3146,2971,2995,3027,2834,2860,2932,3013,3076,3033,3142,3196,3094,3182,3149,3283,3327,3345,3388,3665,3909,4274,3363,3330,3464,3509,3526,3569,3846,4090],
+            '72/75': [3056,3187,3326,3334,3408,3157,3061,3119,3173,3225,3285,2991,3017,3052,2858,2890,2985,3046,3091,3106,3242,3310,3170,3251,3257,3415,3544,3585,3660,4095,4318,4839,3432,3438,3596,3726,3766,3841,4276,4500],
+            '72/85': [3157,3337,3541,3535,3644,3312,3117,3190,3254,3319,3460,2999,3026,3061,2902,2949,3088,3072,3124,3129,3310,3407,3233,3324,3343,3510,3670,3701,3835,4316,4605,5235,3505,3524,3691,3852,3882,4016,4497,4787],
+            '72/100': [3206,3411,3649,3647,3775,3391,3184,3268,3345,3421,3587,3079,3100,3176,2965,3033,3230,3103,3159,3168,3413,3549,3297,3449,3591,3687,3866,3996,4360,4553,5260,6140,3630,3772,3868,4048,4177,4542,4734,5441],
+            '72/125': [3322,3579,3877,3873,4034,3554,3339,3453,3557,3660,3884,3141,3160,3236,3082,3187,3475,3194,3264,3275,3581,3751,3436,3627,3804,3924,4148,4309,4765,5007,5890,6989,3808,3985,4105,4329,4490,4946,5188,6071],
+            '84/60': [3056,3186,3323,3337,3413,3154,3040,3094,3141,3190,3293,2988,3013,3073,2858,2890,2981,3044,3135,3079,3191,3263,3118,3212,3268,3348,3422,3452,3480,3985,4161,4638,3393,3449,3529,3603,3633,3661,4166,4342],
+            '84/75': [3127,3295,3478,3568,3682,3268,3168,3255,3331,3408,3576,3010,3037,3103,2898,2942,3065,3066,3153,3164,3304,3394,3212,3331,3400,3500,3592,3630,3663,4295,4516,5112,3512,3581,3681,3773,3811,3845,4476,4697],
+            '84/85': [3190,3388,3617,3818,3974,3366,3191,3282,3362,3442,3619,3018,3046,3114,2953,3014,3189,3111,3190,3210,3387,3569,3254,3460,3616,3681,3784,3933,4297,4588,5348,6271,3642,3797,3862,3965,4114,4478,4769,5529],
+            '84/100': [3281,3521,3799,3901,4066,3497,3230,3328,3415,3502,3693,3105,3152,3288,3029,3116,3364,3133,3208,3293,3501,3714,3345,3587,3770,3848,3968,4145,4572,4914,5809,6895,3768,3951,4029,4149,4326,4753,5095,5990],
+            '84/125': [3416,3716,4063,4192,4399,3687,3451,3593,3720,3845,4123,3164,3214,3348,3139,3259,3590,3232,3326,3431,3691,3957,3495,3800,4027,4124,4276,4496,5030,5458,6576,7934,3981,4209,4305,4457,4677,5211,5639,6757],
+            '84/150': [3551,3912,4328,4482,4730,3876,3593,3763,3916,4066,4400,3249,3309,3469,3219,3362,3759,3330,3443,3569,3880,4201,3646,4011,4285,4401,4583,4847,5488,6002,7343,8972,4192,4466,4582,4764,5028,5669,6183,7524],
+            '96/75': [3182,3373,3583,3686,3817,3344,3229,3328,3415,3502,3695,3048,3086,3184,2949,3005,3163,3112,3212,3225,3385,3487,3280,3415,3495,3608,3714,3757,3796,4518,4770,5451,3596,3676,3789,3895,3938,3977,4699,4951],
+            '96/85': [3254,3481,3742,3972,4150,3456,3255,3359,3451,3542,3745,3089,3131,3242,3009,3084,3295,3164,3254,3277,3479,3687,3327,3563,3741,3817,3933,4104,4520,4852,5721,6776,3744,3922,3998,4114,4286,4701,5033,5902],
+            '96/100': [3359,3632,3950,4067,4256,3605,3300,3412,3512,3611,3829,3152,3201,3331,3094,3198,3484,3190,3275,3372,3610,3854,3431,3709,3917,4006,4144,4346,4833,5225,6247,7488,3890,4098,4187,4325,4527,5014,5406,6428],
+            '96/125': [3513,3856,4253,4399,4635,3821,3552,3714,3860,4003,4321,3215,3265,3388,3254,3409,3838,3302,3409,3530,3827,4132,3604,3951,4211,4322,4495,4747,5357,5846,7123,8675,4132,4392,4503,4676,4928,5538,6027,7304],
+            '96/150': [3667,4079,4556,4730,5014,4038,3715,3908,4084,4256,4637,3310,3370,3518,3356,3543,4057,3414,3543,3688,4044,4410,3776,4193,4505,4639,4846,5148,5880,6467,8000,9862,4374,4686,4820,5027,5329,6061,6649,8181],
+            '108/85': [3318,3573,3867,4126,4326,3545,3320,3437,3540,3642,3871,3133,3180,3305,3042,3127,3364,3217,3319,3344,3572,3805,3400,3666,3866,0,0,0,0,0,0,0,3847,0,0,0,0,0,0,0],
+            '108/100': [3436,3744,4101,4233,4446,3713,3370,3496,3608,3720,3965,3203,3258,3405,3138,3255,3577,3246,3342,3451,3719,3993,3517,3830,4064,0,0,0,0,0,0,0,4011,0,0,0,0,0,0,0],
+            '108/125': [3609,3995,4442,4606,4872,3957,3654,3836,4000,4161,4518,3275,3331,3469,3318,3493,3975,3372,3493,3628,3963,4306,3712,4103,4395,0,0,0,0,0,0,0,4284,0,0,0,0,0,0,0],
+            '108/150': [3782,4246,4783,4980,5298,4200,3837,4055,4252,4445,4874,3381,3449,3614,3434,3644,4221,3498,3644,3806,4207,4619,3906,4375,4725,0,0,0,0,0,0,0,4556,0,0,0,0,0,0,0],
+            '120/100': [3571,3939,4366,4524,4777,3903,3493,3643,3777,3911,4204,3293,3359,3534,3215,3355,3739,3241,3282,3589,3908,4237,3668,4041,4321,0,0,0,0,0,0,0,4223,0,0,0,0,0,0,0],
+            '120/125': [3705,4134,4631,4814,5109,4092,3756,3958,4140,4319,4716,3334,3396,3550,3383,3577,4111,3442,3577,3727,4099,4480,3820,4255,4578,0,0,0,0,0,0,0,4436,0,0,0,0,0,0,0],
+            '120/150': [3898,4413,5010,5228,5582,4363,3959,4202,4420,4635,5111,3453,3527,3712,3511,3744,4386,3582,3744,3924,4371,4828,4036,4557,4946,0,0,0,0,0,0,0,4738,0,0,0,0,0,0,0]
+        };
+
+        const newPricing = {
+            '36/45': [2721,2778,2801,0,0,0,2765,2788,2810,2833,2887,2780,2796,2810,2606,2626,2676,0,0,2769],
+            '36/50': [2739,2802,2827,0,0,0,2790,2815,2841,2866,2925,2807,2825,2841,2614,2635,2692,0,0,2790],
+            '36/60': [2790,2868,2929,2976,3013,2802,2827,2866,2900,2934,3005,2818,2837,2854,2625,2650,2714,0,0,2835],
+            '48/50': [2777,2844,2891,0,0,0,2802,2836,2861,2891,2954,2849,2871,2889,2633,2660,2737,0,0,2801],
+            '48/60': [2819,2942,3030,3081,3137,2878,2844,2887,2925,2963,3047,2862,2885,2905,2652,2684,2777,0,0,2970],
+            '48/75': [2908,3050,3182,3292,3382,2993,2951,3018,3077,3140,3272,2891,2914,2936,2682,2724,2842,2896,2961,2983],
+            '48/85': [2937,3094,3250,3373,3475,3039,3051,3147,3229,3313,3496,2902,2925,2948,2702,2750,2885,2913,2978,3010],
+            '48/100': [3022,3223,3436,3690,3847,3174,3140,3255,3351,3449,3664,2973,3002,3041,2732,2790,2951,3059,3109,3023],
+            '60/50': [2798,2917,2993,3005,3052,2853,2815,2853,2883,2917,2988,2877,2900,2919,2650,2679,2763,0,0,2893],
+            '60/60': [2844,2993,3103,3187,3258,2934,2866,2912,2954,2996,3089,2891,2914,2936,2663,2695,2782,0,0,2995],
+            '60/75': [2942,3103,3263,3432,3542,3047,2980,3056,3123,3191,3339,2922,2947,2971,2686,2724,2826,2984,3066,3012],
+            '60/85': [3060,3278,3517,3686,3838,3233,3057,3175,3266,3356,3553,2934,2959,2984,2697,2737,2849,3006,3087,3053],
+            '60/100': [3115,3362,3635,3850,4032,3322,3149,3289,3394,3500,3732,3012,3044,3086,2802,2878,3086,3086,3141,3144],
+            '72/50': [2824,3013,3132,3073,3123,2954,2844,2887,2925,2963,3047,2883,2919,2967,2662,2695,2788,0,0,2919],
+            '72/60': [2900,3089,3242,3250,3331,3035,2900,2959,3010,3060,3170,2899,2936,2986,2686,2726,2837,2964,3062,2995],
+            '72/75': [3030,3233,3449,3461,3576,3187,3039,3128,3213,3292,3385,2930,2970,3024,2722,2773,2920,3015,3085,3108],
+            '72/85': [3187,3466,3783,3774,3943,3428,3126,3238,3338,3438,3657,2942,2983,3039,2791,2865,3079,3054,3137,3144],
+            '72/100': [3263,3582,3952,3948,4146,3551,3229,3360,3478,3597,3855,3066,3099,3216,2889,2994,3301,3103,3191,3204],
+            '84/50': [2953,3120,3297,3315,3413,3080,2925,2988,3044,3098,3225,2908,2947,3036,2693,2734,2852,0,0,2978],
+            '84/60': [3030,3232,3444,3466,3584,3182,3005,3089,3162,3238,3399,2925,2964,3057,2724,2773,2914,3011,3153,3066],
+            '84/75': [3140,3401,3686,3825,4002,3360,3204,3339,3458,3576,3838,2959,3001,3103,2785,2853,3044,3046,3181,3198],
+            '84/85': [3238,3546,3901,4214,4455,3512,3239,3382,3505,3629,3904,2971,3015,3120,2870,2965,3237,3116,3238,3269],
+            '84/100': [3379,3752,4183,4342,4599,3715,3301,3453,3588,3723,4019,3106,3179,3390,2988,3123,3508,3150,3267,3399],
+            '96/75': [0,0,0,0,0,0,0,0,0,0,0,3018,3076,3228,2864,2951,3196,2540,0,0]
+        };
+
+        const usedPricing = {
+            letterToIndex: { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9, 'L': 10, 'M': 11 },
+            '12/12': {
+                '0-40': [3040,3079,3137,3192,3228,3270,3518,3596,3704,4029,3885,4210],
+                '40-60': [3110,3163,3236,3306,3356,3409,3670,3769,3905,4321,4087,4502],
+                '60-80': [3216,3281,3385,3479,3546,3611,3893,4025,4202,4749,4384,4931],
+                '80-100': [3294,3377,3492,3607,3686,3769,4062,4218,4425,5079,4606,5260]
+            },
+            '24/12': {
+                '0-40': [3072,3117,3183,3241,3281,3327,3581,3666,3782,4141,3963,4322],
+                '40-60': [3150,3209,3290,3369,3422,3479,3750,3856,4004,4462,4186,4643],
+                '60-80': [3270,3340,3455,3558,3633,3703,3991,4136,4329,4935,4510,5117],
+                '80-100': [3356,3447,3571,3699,3785,3875,4177,4350,4577,5299,4758,5480]
+            },
+            '24/18': {
+                '0-40': [3088,3142,3209,3277,3323,3369,3629,3724,3847,4240,4029,4421],
+                '40-60': [3178,3241,3332,3418,3479,3541,3811,3930,4090,4594,4271,4775],
+                '60-80': [3306,3389,3513,3624,3706,3788,4087,4243,4457,5121,4638,5302],
+                '80-100': [3369,3459,3595,3718,3809,3901,4202,4379,4609,5344,4790,5525]
+            },
+            '24/24': {
+                '0-40': [3110,3166,3236,3306,3356,3405,3666,3765,3897,4310,4078,4491],
+                '40-60': [3204,3270,3364,3455,3521,3587,3860,3983,4152,4679,4333,4861],
+                '60-80': [3340,3426,3554,3674,3760,3846,4148,4312,4541,5236,4722,5417],
+                '80-100': [3405,3501,3640,3771,3868,3962,4272,4457,4701,5470,4882,5651]
+            },
+            '24/36': {
+                '0-40': [3187,3249,3340,3426,3484,3546,3818,3938,4103,4602,4285,4783],
+                '40-60': [3294,3377,3496,3607,3686,3769,4058,4215,4420,5068,4601,5249],
+                '60-80': [3505,3611,3769,3921,4029,4143,4457,4667,4939,5817,5120,5998]
+            },
+            '36/24': {
+                '0-40': [3150,3211,3290,3364,3422,3476,3741,3847,4000,4449,4181,4630],
+                '40-60': [3253,3327,3431,3530,3604,3674,3955,4095,4276,4857,4457,5038],
+                '60-80': [3402,3496,3636,3769,3863,3962,4272,4454,4701,5470,4882,5651]
+            },
+            '36/36': {
+                '0-40': [3211,3277,3373,3463,3525,3591,3868,3996,4165,4693,4346,4874],
+                '40-60': [3327,3414,3538,3657,3739,3826,4119,4285,4498,5183,4679,5364],
+                '60-80': [3546,3661,3826,3986,4099,4217,4541,4758,5051,5969,5232,6150],
+                '80-100': [3715,3855,4053,4246,4378,4522,4865,5133,5475,6584,5656,6765]
+            },
+            '36/48': {
+                '0-40': [3303,3380,3496,3607,3682,3764,4054,4202,4411,5038,4592,5219],
+                '40-60': [3447,3546,3694,3843,3940,4044,4358,4556,4816,5636,4997,5817],
+                '60-80': [3624,3756,3937,4114,4237,4369,4701,4944,5265,6275,5446,6456]
+            },
+            '36/60': {
+                '0-40': [3467,3571,3718,3860,3949,4061,4371,4565,4828,5636,5009,5817],
+                '40-60': [3653,3785,3974,4160,4292,4420,4758,5014,5352,6403,5533,6584],
+                '60-80': [3764,3916,4123,4329,4468,4621,4969,5248,5620,6782,5801,6963]
+            },
+            '48/36': {
+                '0-40': [3277,3358,3465,3567,3640,3712,4001,4147,4338,4935,4519,5117],
+                '40-60': [3418,3513,3653,3789,3884,3981,4287,4471,4718,5499,4899,5680],
+                '60-80': [3619,3746,3926,4101,4221,4349,4684,4918,5238,6237,5420,6418]
+            },
+            '48/48': {
+                '0-40': [3355,3444,3567,3687,3769,3858,4155,4321,4543,5230,4724,5411],
+                '40-60': [3513,3623,3786,3944,4054,4165,4487,4705,4991,5883,5172,6064],
+                '60-80': [3754,3904,4109,4310,4451,4605,4952,5225,5592,6745,5773,6927]
+            },
+            '48/60': {
+                '0-40': [3538,3648,3811,3965,4062,4182,4504,4713,5001,5883,5182,6064],
+                '40-60': [3738,3884,4088,4293,4434,4574,4927,5208,5572,6720,5753,6901],
+                '60-80': [3913,4084,4323,4554,4716,4891,5260,5575,5994,7321,6175,7503]
+            },
+            '48/75': {
+                '0-40': [3704,3840,4033,4212,4335,4477,4819,5072,5417,6476,5598,6657],
+                '40-60': [3948,4118,4367,4608,4780,4950,5333,5665,6104,7480,6285,7661]
+            },
+            '60/48': {
+                '0-40': [3418,3521,3653,3786,3875,3973,4279,4462,4705,5461,4886,5642],
+                '40-60': [3594,3717,3896,4067,4192,4310,4646,4885,5196,6182,5377,6363],
+                '60-80': [3862,4025,4251,4473,4626,4798,5158,5457,5863,7129,6044,7311]
+            },
+            '60/60': {
+                '0-40': [3581,3700,3867,4029,4135,4259,4586,4807,5107,6037,5288,6218],
+                '40-60': [3794,3944,4160,4375,4524,4673,5034,5328,5713,6916,5894,7097]
+            },
+            '60/75': {
+                '0-40': [3754,3901,4101,4293,4421,4571,4923,5188,5550,6665,5731,6846],
+                '40-60': [4012,4192,4456,4712,4891,5071,5461,5811,6271,7719,6452,7900]
+            }
+        };
+
+        // Helper functions
+        function parseClassificationCode(code) {
+            const numericMatch = code.match(/^(\d+)([A-M])$/);
+            if (numericMatch) {
+                return { 
+                    number: parseInt(numericMatch[1]), 
+                    letter: numericMatch[2], 
+                    arrayIndex: parseInt(numericMatch[1]) - 1,
+                    letterIndex: usedPricing.letterToIndex[numericMatch[2]]
+                };
+            }
+            
+            const letterMatch = code.match(/^([A-M])$/);
+            if (letterMatch) {
+                return {
+                    number: null,
+                    letter: letterMatch[1],
+                    arrayIndex: null,
+                    letterIndex: usedPricing.letterToIndex[letterMatch[1]]
+                };
+            }
+            
+            return null;
+        }
+
+        function isVehicleUnderFactoryWarranty(firstUseDate, currentMileage, manufacturerKey) {
+            if (!firstUseDate || !manufacturerKey) return false;
+            
+            const dofu = new Date(firstUseDate);
+            const today = new Date();
+            const ageYears = (today - dofu) / (1000 * 60 * 60 * 24 * 365.25);
+            
+            const extendedWarrantyBrands = ['hyundai', 'kia', 'mitsubishi'];
+            const warrantyYears = extendedWarrantyBrands.includes(manufacturerKey) ? 5 : 3;
+            const warrantyMiles = extendedWarrantyBrands.includes(manufacturerKey) ? 60000 : 36000;
+            
+            return ageYears < warrantyYears && currentMileage < warrantyMiles;
+        }
+
+        function getWrapPrice(plan, classification) {
+            if (!wrapPricing[plan] || classification.arrayIndex === null || classification.arrayIndex < 0) return null;
+            const price = wrapPricing[plan][classification.arrayIndex];
+            return (price && price > 0) ? price : null;
+        }
+
+        function getNewPrice(plan, classification) {
+            if (!newPricing[plan] || classification.arrayIndex === null || classification.arrayIndex < 0) return null;
+            if (classification.arrayIndex >= newPricing[plan].length) return null;
+            const price = newPricing[plan][classification.arrayIndex];
+            return (price && price > 0) ? price : null;
+        }
+
+        function getUsedPrice(plan, classification, currentMileage) {
+            if (!usedPricing[plan] || classification.letterIndex === null || classification.letterIndex < 0) return null;
+            
+            let mileageTier;
+            if (currentMileage <= 40000) mileageTier = '0-40';
+            else if (currentMileage <= 60000) mileageTier = '40-60';
+            else if (currentMileage <= 80000) mileageTier = '60-80';
+            else if (currentMileage <= 100000) mileageTier = '80-100';
+            else return null;
+            
+            if (!usedPricing[plan][mileageTier]) return null;
+            
+            const price = usedPricing[plan][mileageTier][classification.letterIndex];
+            return (price && price > 0) ? price : null;
+        }
+
+        // Initialize manufacturer dropdown
+        function initializeManufacturerDropdown() {
+            const select = document.getElementById('manufacturer');
+            Object.keys(manufacturerData).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = manufacturerData[key].name;
+                select.appendChild(option);
+            });
+        }
+
+        function handleManufacturerChange() {
+            const manufacturerKey = document.getElementById('manufacturer').value;
+            const modelGroup = document.getElementById('modelGroup');
+            const modelSelect = document.getElementById('specificModel');
+            const planCodeInput = document.getElementById('planCode');
+
+            if (!manufacturerKey) {
+                modelGroup.style.display = 'none';
+                planCodeInput.value = '';
+                updateVehicleStatus();
+                return;
+            }
+
+            const mfgData = manufacturerData[manufacturerKey];
+            planCodeInput.value = mfgData.generalCode;
+
+            modelSelect.innerHTML = `<option value="">Use General Code (${mfgData.generalCode})</option>`;
+            
+            if (Object.keys(mfgData.models).length > 0) {
+                modelGroup.style.display = 'block';
+                Object.entries(mfgData.models).forEach(([model, code]) => {
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = `${model} (${code})`;
+                    modelSelect.appendChild(option);
+                });
+            } else {
+                modelGroup.style.display = 'none';
+            }
+
+            updateVehicleStatus();
+        }
+
+        function handleModelChange() {
+            const modelCode = document.getElementById('specificModel').value;
+            const planCodeInput = document.getElementById('planCode');
+            const manufacturerKey = document.getElementById('manufacturer').value;
+
+            if (modelCode) {
+                planCodeInput.value = modelCode;
+            } else if (manufacturerKey) {
+                planCodeInput.value = manufacturerData[manufacturerKey].generalCode;
+            }
+            updateVehicleStatus();
+        }
+
+        function updateVehicleStatus() {
+            const firstUseDate = document.getElementById('firstUseDate').value;
+            const currentMileage = parseInt(document.getElementById('currentMileage').value) || 0;
+            const manufacturerKey = document.getElementById('manufacturer').value;
+            const vehicleStatus = document.getElementById('vehicleStatus');
+
+            if (!firstUseDate || !manufacturerKey) {
+                vehicleStatus.style.display = 'none';
+                return;
+            }
+
+            const dofu = new Date(firstUseDate);
+            const today = new Date();
+            const ageYears = (today - dofu) / (1000 * 60 * 60 * 24 * 365.25);
+            const years = Math.floor(ageYears);
+            const months = Math.floor((ageYears - years) * 12);
+
+            const underWarranty = isVehicleUnderFactoryWarranty(firstUseDate, currentMileage, manufacturerKey);
+            
+            document.getElementById('statusAge').textContent = `${years}y ${months}m`;
+            document.getElementById('statusMiles').textContent = currentMileage.toLocaleString();
+            document.getElementById('statusWarranty').textContent = underWarranty ? 'Active' : 'Expired';
+            document.getElementById('statusWarranty').style.color = underWarranty ? '#28a745' : '#ff6b6b';
+            
+            // Count available plans
+            let availablePlans = 0;
+            if (ageYears <= 10) availablePlans++; // Wrap
+            if (underWarranty) availablePlans++; // New
+            if (currentMileage <= 100000) availablePlans++; // Used
+            
+            document.getElementById('statusEligible').textContent = availablePlans;
+            vehicleStatus.style.display = 'block';
+        }
+
+        function calculateWarranties() {
+            const planCode = document.getElementById('planCode').value.trim().toUpperCase();
+            const currentMileage = parseInt(document.getElementById('currentMileage').value) || 0;
+            const milesPerYear = parseInt(document.getElementById('milesPerYear').value) || null;
+            const yearsToKeep = parseInt(document.getElementById('yearsToKeep').value) || null;
+            const hasTurbo = document.getElementById('hasTurbo').checked;
+            const isDiesel = document.getElementById('isDiesel').checked;
+            const firstUseDate = document.getElementById('firstUseDate').value;
+            const purchaseDate = document.getElementById('purchaseDate').value;
+
+            if (!planCode || !currentMileage || !firstUseDate || !purchaseDate) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            const classification = parseClassificationCode(planCode);
+            if (!classification) {
+                showError('Invalid vehicle classification code');
+                return;
+            }
+
+            hideError();
+
+            const warranties = [];
+            const manufacturerKey = document.getElementById('manufacturer').value;
+            const underWarranty = isVehicleUnderFactoryWarranty(firstUseDate, currentMileage, manufacturerKey);
+            
+            // Calculate vehicle age
+            const vehicleYear = new Date(firstUseDate).getFullYear();
+            const currentYear = new Date().getFullYear();
+            const vehicleAge = currentYear - vehicleYear;
+            
+            // Calculate how many years from DOFU to when customer will stop owning
+            const dofuDate = new Date(firstUseDate);
+            const today = new Date();
+            let totalYearsFromDofu = vehicleAge;
+            if (yearsToKeep) {
+                totalYearsFromDofu += yearsToKeep;
+            }
+
+            // WRAP WARRANTIES - Available for vehicles 10 years old or newer
+            if (vehicleAge <= 10) {
+                const wrapPlans = Object.keys(wrapPricing).sort((a, b) => {
+                    const [aMonths, aMiles] = a.split('/').map(Number);
+                    const [bMonths, bMiles] = b.split('/').map(Number);
+                    return (bMonths + bMiles) - (aMonths + aMiles);
+                });
+
+                wrapPlans.forEach(plan => {
+                    const basePrice = getWrapPrice(plan, classification);
+                    if (basePrice) {
+                        const [months, miles] = plan.split('/').map(Number);
+                        
+                        // For Wrap: Check if warranty covers until customer stops owning
+                        const warrantyEndDate = new Date(firstUseDate);
+                        warrantyEndDate.setMonth(warrantyEndDate.getMonth() + months);
+                        
+                        // Must extend beyond today AND cover the ownership period
+                        const customerEndDate = new Date();
+                        if (yearsToKeep) {
+                            customerEndDate.setFullYear(customerEndDate.getFullYear() + yearsToKeep);
+                        }
+                        
+                        if (warrantyEndDate > today) {
+                            let finalPrice = basePrice;
+                            if (hasTurbo) finalPrice += 150;
+                            if (isDiesel) finalPrice += 150;
+
+                            warranties.push({
+                                type: 'wrap',
+                                plan: plan,
+                                price: finalPrice,
+                                months: months,
+                                miles: miles * 1000,
+                                startDate: new Date(firstUseDate),
+                                startMiles: 0,
+                                deductible: '$0',
+                                coverageType: 'Platinum Wrap',
+                                coversOwnershipPeriod: yearsToKeep ? warrantyEndDate >= customerEndDate : true
+                            });
+                        }
+                    }
+                });
+            }
+
+            // NEW WARRANTIES - Only if under factory warranty
+            if (underWarranty) {
+                const newPlans = Object.keys(newPricing).sort((a, b) => {
+                    const [aMonths, aMiles] = a.split('/').map(Number);
+                    const [bMonths, bMiles] = b.split('/').map(Number);
+                    return (bMonths + bMiles) - (aMonths + aMiles);
+                });
+
+                newPlans.forEach(plan => {
+                    const basePrice = getNewPrice(plan, classification);
+                    if (basePrice) {
+                        const [months, miles] = plan.split('/').map(Number);
+                        let finalPrice = basePrice;
+                        if (hasTurbo) finalPrice += 150;
+                        if (isDiesel) finalPrice += 150;
+
+                        warranties.push({
+                            type: 'new',
+                            plan: plan,
+                            price: finalPrice,
+                            months: months,
+                            miles: miles * 1000,
+                            startDate: new Date(purchaseDate),
+                            startMiles: 0,
+                            deductible: '$100',
+                            coverageType: 'Platinum New'
+                        });
+                    }
+                });
+            }
+
+            // USED WARRANTIES - For vehicles with up to 100k miles
+            if (currentMileage <= 100000) {
+                const usedPlans = Object.keys(usedPricing).filter(key => key !== 'letterToIndex').sort((a, b) => {
+                    const [aMonths, aMiles] = a.split('/').map(Number);
+                    const [bMonths, bMiles] = b.split('/').map(Number);
+                    return (bMonths + bMiles) - (aMonths + aMiles);
+                });
+
+                usedPlans.forEach(plan => {
+                    const basePrice = getUsedPrice(plan, classification, currentMileage);
+                    if (basePrice) {
+                        const [months, miles] = plan.split('/').map(Number);
+                        let finalPrice = basePrice;
+                        if (hasTurbo) finalPrice += 150;
+                        if (isDiesel) finalPrice += 150;
+
+                        warranties.push({
+                            type: 'used',
+                            plan: plan,
+                            price: finalPrice,
+                            months: months,
+                            miles: miles * 1000,
+                            startDate: new Date(purchaseDate),
+                            startMiles: currentMileage,
+                            deductible: '$100',
+                            coverageType: 'Platinum Used'
+                        });
+                    }
+                });
+            }
+
+            if (warranties.length === 0) {
+                showError('No warranty options available for this vehicle');
+                return;
+            }
+
+            // Sort and select best warranties
+            let selectedWarranties = selectBestWarranties(warranties, currentMileage, milesPerYear, yearsToKeep);
+            displayResults(selectedWarranties, currentMileage, milesPerYear, yearsToKeep);
+        }
+
+        function selectBestWarranties(warranties, currentMileage, milesPerYear, yearsToKeep) {
+            // Separate by type
+            const wrapWarranties = warranties.filter(w => w.type === 'wrap');
+            const newWarranties = warranties.filter(w => w.type === 'new');
+            const usedWarranties = warranties.filter(w => w.type === 'used');
+
+            let selected = [];
+
+            // If customer specified their needs
+            if (milesPerYear && yearsToKeep) {
+                const totalMilesNeeded = currentMileage + (milesPerYear * yearsToKeep);
+                const monthsNeeded = yearsToKeep * 12;
+
+                // Find best wrap warranty (that covers the ENTIRE ownership period from DOFU)
+                if (wrapWarranties.length > 0) {
+                    // First try to find warranties that cover the full period
+                    const fullCoverageWraps = wrapWarranties.filter(w => w.coversOwnershipPeriod);
+                    
+                    if (fullCoverageWraps.length > 0) {
+                        // Get the cheapest one that covers everything
+                        const bestWrap = fullCoverageWraps
+                            .filter(w => w.miles >= totalMilesNeeded)
+                            .sort((a, b) => a.price - b.price)[0];
+                        
+                        if (bestWrap) {
+                            selected.push(bestWrap);
+                        } else {
+                            // If none cover the miles, get the one with most miles
+                            selected.push(fullCoverageWraps.sort((a, b) => b.miles - a.miles)[0]);
+                        }
+                    } else {
+                        // If no wrap covers full period, get the longest one
+                        selected.push(wrapWarranties.sort((a, b) => b.months - a.months)[0]);
+                    }
+                }
+
+                // Find best new warranty
+                if (newWarranties.length > 0) {
+                    const bestNew = newWarranties
+                        .filter(w => w.miles >= totalMilesNeeded && w.months >= monthsNeeded)
+                        .sort((a, b) => a.price - b.price)[0];
+                    
+                    if (bestNew) {
+                        selected.push(bestNew);
+                    } else {
+                        // Get the longest coverage available
+                        selected.push(newWarranties.sort((a, b) => (b.months * 1000 + b.miles) - (a.months * 1000 + a.miles))[0]);
+                    }
+                }
+
+                // Find best used warranty
+                if (usedWarranties.length > 0) {
+                    const bestUsed = usedWarranties
+                        .filter(w => w.miles >= totalMilesNeeded && w.months >= monthsNeeded)
+                        .sort((a, b) => a.price - b.price)[0];
+                    
+                    if (bestUsed) {
+                        selected.push(bestUsed);
+                    } else {
+                        // Get the longest coverage available
+                        selected.push(usedWarranties.sort((a, b) => (b.months * 1000 + b.miles) - (a.months * 1000 + a.miles))[0]);
+                    }
+                }
+            } else {
+                // Default selection: show best value from each category
+                if (wrapWarranties.length > 0) {
+                    // For wrap, prioritize $0 deductible value
+                    selected.push(wrapWarranties.sort((a, b) => (a.price / a.months) - (b.price / b.months))[0]);
+                }
+                if (newWarranties.length > 0) {
+                    selected.push(newWarranties.sort((a, b) => (a.price / a.months) - (b.price / b.months))[0]);
+                }
+                if (usedWarranties.length > 0) {
+                    selected.push(usedWarranties.sort((a, b) => (a.price / a.months) - (b.price / b.months))[0]);
+                }
+            }
+
+            // Ensure we show at least 3 options if available
+            if (selected.length < 3) {
+                const allWarranties = [...warranties]
+                    .filter(w => !selected.includes(w))
+                    .sort((a, b) => {
+                        // Prioritize wrap warranties (due to $0 deductible)
+                        if (a.type === 'wrap' && b.type !== 'wrap') return -1;
+                        if (b.type === 'wrap' && a.type !== 'wrap') return 1;
+                        // Then sort by value
+                        return (a.price / a.months) - (b.price / b.months);
+                    });
+                
+                while (selected.length < 3 && allWarranties.length > 0) {
+                    selected.push(allWarranties.shift());
+                }
+            }
+
+            return selected.slice(0, 3);
+        }
+
+        function displayResults(warranties, currentMileage, milesPerYear, yearsToKeep) {
+            const resultsSection = document.getElementById('resultsSection');
+            const warrantyGrid = document.getElementById('warrantyGrid');
+            const comparisonSummary = document.getElementById('comparisonSummary');
+
+            if (milesPerYear && yearsToKeep) {
+                comparisonSummary.innerHTML = `
+                    <h3>Based on Your Driving Habits</h3>
+                    <p>You'll drive approximately ${(milesPerYear * yearsToKeep).toLocaleString()} miles over ${yearsToKeep} years</p>
+                `;
+                comparisonSummary.style.display = 'block';
+            } else {
+                comparisonSummary.style.display = 'none';
+            }
+
+            warrantyGrid.innerHTML = warranties.map((warranty, index) => 
+                createWarrantyCard(warranty, index === 0, currentMileage, milesPerYear, yearsToKeep)
+            ).join('');
+
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createWarrantyCard(warranty, isRecommended, currentMileage, milesPerYear, yearsToKeep) {
+            const monthlyPrice = Math.round(warranty.price / warranty.months);
+            const costPerMile = (warranty.price / warranty.miles).toFixed(3);
+
+            const expirationDate = new Date(warranty.startDate);
+            expirationDate.setMonth(expirationDate.getMonth() + warranty.months);
+            
+            const expirationMiles = warranty.startMiles + warranty.miles;
+
+            const typeClasses = { 'new': 'type-new', 'used': 'type-used', 'wrap': 'type-wrap' };
+
+            let coverageAnalysis = '';
+            if (milesPerYear && yearsToKeep) {
+                const totalMilesNeeded = currentMileage + (milesPerYear * yearsToKeep);
+                const endDate = new Date();
+                endDate.setFullYear(endDate.getFullYear() + yearsToKeep);
+
+                const coversTime = expirationDate >= endDate;
+                const coversMiles = expirationMiles >= totalMilesNeeded;
+
+                if (coversTime && coversMiles) {
+                    coverageAnalysis = `
+                        <div class="value-proposition">
+                            <p>✓ Full coverage for your ${yearsToKeep}-year ownership period</p>
+                        </div>
+                    `;
+                } else if (!coversTime || !coversMiles) {
+                    let shortfall = [];
+                    if (!coversTime) {
+                        const monthsShort = Math.ceil((endDate - expirationDate) / (1000 * 60 * 60 * 24 * 30));
+                        shortfall.push(`${monthsShort} months`);
+                    }
+                    if (!coversMiles) {
+                        const milesShort = totalMilesNeeded - expirationMiles;
+                        shortfall.push(`${milesShort.toLocaleString()} miles`);
+                    }
+                    coverageAnalysis = `
+                        <div class="eligibility-warning">
+                            ⚠ Coverage gap: ${shortfall.join(' and ')} short of your needs
+                        </div>
+                    `;
+                }
+            }
+
+            return `
+                <div class="warranty-card ${isRecommended ? 'recommended' : ''}">
+                    ${isRecommended ? '<div class="recommendation-badge">BEST VALUE</div>' : ''}
+                    
+                    <div class="warranty-header">
+                        <div class="warranty-type ${typeClasses[warranty.type]}">${warranty.coverageType}</div>
+                        <div class="warranty-price">${warranty.price.toLocaleString()}</div>
+                    </div>
+
+                    <div class="price-breakdown">
+                        <div class="price-item">
+                            <div class="price-item-value">${monthlyPrice}</div>
+                            <div class="price-item-label">Per Month</div>
+                        </div>
+                        <div class="price-item">
+                            <div class="price-item-value">${costPerMile}</div>
+                            <div class="price-item-label">Per Mile</div>
+                        </div>
+                        <div class="price-item">
+                            <div class="price-item-value">${warranty.deductible}</div>
+                            <div class="price-item-label">Deductible</div>
+                        </div>
+                    </div>
+
+                    <div class="warranty-features">
+                        <div class="feature-item">
+                            <div class="feature-icon blue">📅</div>
+                            <span>${warranty.months} months / ${(warranty.miles / 1000).toLocaleString()}k miles</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green">✓</div>
+                            <span>Expires: ${expirationDate.toLocaleDateString()} or ${expirationMiles.toLocaleString()} miles</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon blue">🛡️</div>
+                            <span>Coverage from ${warranty.type === 'wrap' ? 'original in-service date' : 'purchase date'}</span>
+                        </div>
+                    </div>
+
+                    <div class="coverage-timeline">
+                        <div class="timeline-header">Coverage Timeline</div>
+                        <div class="timeline-bar">
+                            <div class="timeline-fill" style="width: ${Math.min(100, (warranty.months / 120) * 100)}%">
+                                ${warranty.months} months
+                            </div>
+                        </div>
+                    </div>
+
+                    ${coverageAnalysis}
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Initialize on page load
+        initializeManufacturerDropdown();
+    </script>
+</body>
+</html>
