@@ -816,11 +816,35 @@
             const today = new Date();
             const ageYears = (today - dofu) / (1000 * 60 * 60 * 24 * 365.25);
             
-            const extendedWarrantyBrands = ['hyundai', 'kia', 'mitsubishi'];
-            const warrantyYears = extendedWarrantyBrands.includes(manufacturerKey) ? 5 : 3;
-            const warrantyMiles = extendedWarrantyBrands.includes(manufacturerKey) ? 60000 : 36000;
+            // Factory warranty terms by manufacturer
+            const warrantyTerms = {
+                // 5 year / 60,000 mile warranties
+                'hyundai': { years: 5, miles: 60000 },
+                'kia': { years: 5, miles: 60000 },
+                'mitsubishi': { years: 5, miles: 60000 },
+                
+                // 4 year / 50,000 mile warranties
+                'lexus': { years: 4, miles: 50000 },
+                'toyota': { years: 3, miles: 36000 }, // Basic warranty (powertrain is longer)
+                'jaguar': { years: 5, miles: 60000 },
+                'landrover': { years: 5, miles: 60000 },
+                'mercedes': { years: 4, miles: 50000 },
+                'bmw': { years: 4, miles: 50000 },
+                'audi': { years: 4, miles: 50000 },
+                'porsche': { years: 4, miles: 50000 },
+                'mini': { years: 4, miles: 50000 },
+                'volkswagen': { years: 4, miles: 50000 },
+                'volvo': { years: 4, miles: 50000 },
+                'infiniti': { years: 4, miles: 60000 },
+                'acura': { years: 4, miles: 50000 },
+                
+                // 3 year / 36,000 mile warranties (standard for most others)
+                'default': { years: 3, miles: 36000 }
+            };
             
-            return ageYears < warrantyYears && currentMileage < warrantyMiles;
+            const warranty = warrantyTerms[manufacturerKey] || warrantyTerms['default'];
+            
+            return ageYears < warranty.years && currentMileage < warranty.miles;
         }
 
         function getWrapPrice(plan, classification) {
@@ -928,10 +952,44 @@
 
             const underWarranty = isVehicleUnderFactoryWarranty(firstUseDate, currentMileage, manufacturerKey);
             
+            // Get warranty terms for display
+            const warrantyTerms = {
+                'hyundai': { years: 5, miles: 60000 },
+                'kia': { years: 5, miles: 60000 },
+                'mitsubishi': { years: 5, miles: 60000 },
+                'lexus': { years: 4, miles: 50000 },
+                'toyota': { years: 3, miles: 36000 },
+                'jaguar': { years: 5, miles: 60000 },
+                'landrover': { years: 5, miles: 60000 },
+                'mercedes': { years: 4, miles: 50000 },
+                'bmw': { years: 4, miles: 50000 },
+                'audi': { years: 4, miles: 50000 },
+                'porsche': { years: 4, miles: 50000 },
+                'mini': { years: 4, miles: 50000 },
+                'volkswagen': { years: 4, miles: 50000 },
+                'volvo': { years: 4, miles: 50000 },
+                'infiniti': { years: 4, miles: 60000 },
+                'acura': { years: 4, miles: 50000 },
+                'default': { years: 3, miles: 36000 }
+            };
+            
+            const warranty = warrantyTerms[manufacturerKey] || warrantyTerms['default'];
+            
             document.getElementById('statusAge').textContent = `${years}y ${months}m`;
             document.getElementById('statusMiles').textContent = currentMileage.toLocaleString();
-            document.getElementById('statusWarranty').textContent = underWarranty ? 'Active' : 'Expired';
+            
+            let warrantyStatus = underWarranty ? 'Active' : 'Expired';
+            if (!underWarranty && currentMileage < warranty.miles && ageYears < warranty.years) {
+                warrantyStatus = 'Check Details';
+            }
+            
+            document.getElementById('statusWarranty').textContent = warrantyStatus;
             document.getElementById('statusWarranty').style.color = underWarranty ? '#28a745' : '#ff6b6b';
+            
+            // Add tooltip or subtitle showing warranty terms
+            if (document.getElementById('statusWarranty').title) {
+                document.getElementById('statusWarranty').title = `${warranty.years} year / ${warranty.miles.toLocaleString()} mile warranty`;
+            }
             
             // Count available plans
             let availablePlans = 0;
