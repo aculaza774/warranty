@@ -1152,12 +1152,30 @@
 
                 // Find best used warranty
                 if (usedWarranties.length > 0) {
-                    const bestUsed = usedWarranties
-                        .filter(w => w.miles >= totalMilesNeeded && w.months >= monthsNeeded)
-                        .sort((a, b) => a.price - b.price)[0];
+                    // For used warranties, we need to cover the ADDITIONAL miles/months
+                    const additionalMilesNeeded = milesPerYear * yearsToKeep;
+                    const additionalMonthsNeeded = yearsToKeep * 12;
                     
-                    if (bestUsed) {
-                        selected.push(bestUsed);
+                    // First try to find exact or slightly over coverage
+                    const perfectFitUsed = usedWarranties
+                        .filter(w => w.miles >= additionalMilesNeeded && w.months >= additionalMonthsNeeded)
+                        .sort((a, b) => {
+                            // Prioritize closer fits first
+                            const aOverage = (a.miles - additionalMilesNeeded) + (a.months - additionalMonthsNeeded) * 1000;
+                            const bOverage = (b.miles - additionalMilesNeeded) + (b.months - additionalMonthsNeeded) * 1000;
+                            if (Math.abs(aOverage - bOverage) < 5000) {
+                                // If similar coverage, choose by price
+                                return a.price - b.price;
+                            }
+                            return aOverage - bOverage;
+                        });
+                    
+                    if (perfectFitUsed.length > 0) {
+                        selected.push(perfectFitUsed[0]);
+                        // Also add the next best option if available
+                        if (perfectFitUsed.length > 1 && selected.length < 3) {
+                            selected.push(perfectFitUsed[1]);
+                        }
                     } else {
                         // Get the longest coverage available
                         selected.push(usedWarranties.sort((a, b) => (b.months * 1000 + b.miles) - (a.months * 1000 + a.miles))[0]);
@@ -1182,9 +1200,32 @@
                 const allWarranties = [...warranties]
                     .filter(w => !selected.includes(w))
                     .sort((a, b) => {
+                        // If customer has specific needs, prioritize coverage match
+                        if (milesPerYear && yearsToKeep) {
+                            const additionalMilesNeeded = milesPerYear * yearsToKeep;
+                            const additionalMonthsNeeded = yearsToKeep * 12;
+                            
+                            // For wrap warranties, check total coverage
+                            if (a.type === 'wrap' && b.type === 'wrap') {
+                                const aCovers = a.coversOwnershipPeriod && a.miles >= (currentMileage + additionalMilesNeeded);
+                                const bCovers = b.coversOwnershipPeriod && b.miles >= (currentMileage + additionalMilesNeeded);
+                                if (aCovers && !bCovers) return -1;
+                                if (bCovers && !aCovers) return 1;
+                            }
+                            
+                            // For used warranties, check if they cover the additional needs
+                            if (a.type === 'used' && b.type === 'used') {
+                                const aCovers = a.miles >= additionalMilesNeeded && a.months >= additionalMonthsNeeded;
+                                const bCovers = b.miles >= additionalMilesNeeded && b.months >= additionalMonthsNeeded;
+                                if (aCovers && !bCovers) return -1;
+                                if (bCovers && !aCovers) return 1;
+                            }
+                        }
+                        
                         // Prioritize wrap warranties (due to $0 deductible)
                         if (a.type === 'wrap' && b.type !== 'wrap') return -1;
                         if (b.type === 'wrap' && a.type !== 'wrap') return 1;
+                        
                         // Then sort by value
                         return (a.price / a.months) - (b.price / b.months);
                     });
